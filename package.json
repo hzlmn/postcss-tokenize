@@ -1,0 +1,30 @@
+{
+  "name": "postcss-lexer",
+  "version": "0.0.0",
+  "description": "Decoupled PostCSS tokenizer",
+  "main": "index.js",
+  "directories": {
+    "src": "src",
+    "test": "test"
+  },
+  "devDependencies": {
+    "ava": "^0.17.0",
+    "postcss": "^5.2.8"
+  },
+  "scripts": {
+    "test": "tsc -p ./test && ava",
+    "build": "tsc -p ./src",
+    "dev": "tsc -p ./src -w",
+    "clean": "rm ./src/*.js && rm ./test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hzlmn/postcss-tokenize.git"
+  },
+  "author": "Oleh Kuchuk",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hzlmn/postcss-tokenize/issues"
+  },
+  "homepage": "https://github.com/hzlmn/postcss-tokenize#readme"
+}

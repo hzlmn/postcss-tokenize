@@ -30,15 +30,16 @@ export class Tokenizer {
 
   /**
    * Read next token value
-   * @returns IToken
    */
-  readNextToken(): IToken {}
+  readNextToken(): Array<any> {
+    return []
+  }
 
   /**
    * Driver for working with list of tokens
    */
   tokenize() {
-    let tokens: Array<IToken> = []
+    let tokens: Array<any> = []
     while (!this.$stream.endOfFile()) {
       tokens.push(this.readNextToken())
     }
@@ -47,7 +48,7 @@ export class Tokenizer {
 }
 
 /* This is for backward compatibility with old mode */
-export function tokenize(input: string, options) {
+export function tokenize(input: string, options?) {
   const tokenizer = new Tokenizer(input, options)
-  return tokenizer.tokenize()
+  return []
 }
