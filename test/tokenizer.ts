@@ -6,7 +6,7 @@
 import test from 'ava'
 import {Tokenizer, tokenize} from '../src'
 
-function run(t, css, opts?, tokens?) {
+function run(t, css: string, opts?, tokens?) {
     if ( typeof tokens === 'undefined' ) [tokens, opts] = [opts, tokens];
     t.deepEqual(tokenize(css, opts), tokens);
 }

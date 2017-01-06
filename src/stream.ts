@@ -1,12 +1,16 @@
 import { UnknownCharError } from './errors'
 import { Character } from './interfaces'
+import { TokenTypes, TokenNames } from './tokens'
+
+/* List fo chars that starts new line */
+const NEWLINE_CHARS = ''
 
 /* Base class for working with character stream */
 export class InputStream {
   source: string
-  pos: number
+  cursor: number
   line: number
-  offset: number
+  column: number
   char: Character
   $length: number
 
@@ -19,19 +23,33 @@ export class InputStream {
       this.source = source
       this.$length = this.source.length
 
-      this.pos = 0
+      this.cursor = 0
       this.line = 1
-      this.offset = -1
+      this.column = 0
 
       this.char = null
   }
 
-  getInitialPosition() {
+  getInitialPosition() {}
 
-  }
-
-  readNextChar() {
-
+  /**
+   * Read next character value
+   */
+  readNextChar(): Character {
+    const charCode = this.source.charCodeAt(this.cursor)
+    if (charCode === TokenTypes.NewLine) {
+      this.line = this.line + 1
+      this.column = 0
+    } else {
+      this.column = this.column + 1
+    }
+    this.cursor++
+    return {
+      code: charCode,
+      value: String.fromCharCode(charCode),
+      line: this.line,
+      column: this.column
+    }
   }
 
   /**
@@ -45,7 +63,7 @@ export class InputStream {
    * Check if end of file was reached
    */
   endOfFile() {
-    return this.pos > this.$length
+    return this.cursor >= this.$length
   }
 
   /**

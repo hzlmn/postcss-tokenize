@@ -1,3 +1,5 @@
+import Input from '../node_modules/postcss/d.ts/input'
+
 import {
   IToken,
   ITokenizer,
@@ -48,7 +50,8 @@ export class Tokenizer {
 }
 
 /* This is for backward compatibility with old mode */
-export function tokenize(input: string, options?) {
-  const tokenizer = new Tokenizer(input, options)
+export function tokenize(input: Input, options?) {
+  var css = input.css.valueOf()
+  const tokenizer = new Tokenizer(css, options)
   return []
 }

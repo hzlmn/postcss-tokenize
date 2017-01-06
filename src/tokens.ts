@@ -21,7 +21,7 @@ const COLON             =  ':'.charCodeAt(0);
 const AT                =  '@'.charCodeAt(0);
 
 /* List of all available toke types */
-export const TokenTypes: Map<number> = {
+export const TokenTypes = {
   SingleQuote: SINGLE_QUOTE,
   DodubleQuote: DOUBLE_QUOTE,
   BackSlash: BACKSLASH,
@@ -42,3 +42,14 @@ export const TokenTypes: Map<number> = {
   Colon: COLON,
   At: AT
 }
+
+/* Get back map of token values */
+const getTokenValues = (tokenTypes) =>
+  Object.keys(tokenTypes)
+    .reduce((acc, key) => {
+      acc[tokenTypes[key]] = key
+      return acc
+    }, {})
+
+
+export const TokenNames = getTokenValues(TokenTypes)

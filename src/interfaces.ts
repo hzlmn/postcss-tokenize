@@ -25,7 +25,7 @@ export interface Map<T> {
 /* Interface for character object */
 export interface Character {
   code: number,
-  value: string,
+  value: string
   line: number,
   column: number
 }
