@@ -5,65 +5,85 @@ import { TokenTypes, TokenNames } from './tokens'
 /* List fo chars that starts new line */
 const NEWLINE_CHARS = ''
 
+/* Internal positioning state */
+interface PositionState {
+  cursor: number,
+  line: number,
+  column: number
+}
+
 /* Base class for working with character stream */
 export class InputStream {
   source: string
-  cursor: number
-  line: number
-  column: number
-  char: Character
-  $length: number
+  currentChar: Character
+  length: number
+  $: PositionState
 
-  constructor (
-    source,
-    position?: {
-      line: number,
-      column: number
-    }) {
-      this.source = source
-      this.$length = this.source.length
+  /**
+   * @class InputStream
+   *
+   * @param  {string} source
+   * @param  {number} line=1
+   * @param  {number} column=0
+  */
+  constructor(source, line = 1, column = 0) {
+    this.source = source
+    this.length = this.source.length
 
-      this.cursor = 0
-      this.line = 1
-      this.column = 0
+    /* Internal position variable */
+    this.$ = {
+      cursor: 0,
+      line: line,
+      column
+    }
 
-      this.char = null
+    /* currentCharacter */
+    this.currentChar = null
   }
 
+  /**
+   * Get initial cursor position
+   * from line and column
+   */
   getInitialPosition() {}
 
   /**
    * Read next character value
    */
   readNextChar(): Character {
-    const charCode = this.source.charCodeAt(this.cursor)
+    const charCode = this.source.charCodeAt(this.$.cursor)
+
     if (charCode === TokenTypes.NewLine) {
-      this.line = this.line + 1
-      this.column = 0
+      ++this.$.line
+      this.$.column = 0
     } else {
-      this.column = this.column + 1
+      ++this.$.column
     }
-    this.cursor++
-    return {
+
+    this.$.cursor++
+
+    this.currentChar = {
       code: charCode,
       value: String.fromCharCode(charCode),
-      line: this.line,
-      column: this.column
+      line: this.$.line,
+      column: this.$.column
     }
+
+    return this.currentChar
   }
 
   /**
    * Get current Character
    */
   getCurrentChar() {
-    return this.char
+    return this.currentChar
   }
 
   /**
    * Check if end of file was reached
    */
   endOfFile() {
-    return this.cursor >= this.$length
+    return this.$.cursor >= this.length
   }
 
   /**

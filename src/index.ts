@@ -50,8 +50,7 @@ export class Tokenizer {
 }
 
 /* This is for backward compatibility with old mode */
-export function tokenize(input: Input, options?) {
-  var css = input.css.valueOf()
-  const tokenizer = new Tokenizer(css, options)
+export function tokenize(input: string, options?) {
+  const tokenizer = new Tokenizer(input, options)
   return []
 }
