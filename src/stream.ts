@@ -53,7 +53,10 @@ export class InputStream {
   readNextChar(): Character {
     const charCode = this.source.charCodeAt(this.$.cursor)
 
-    if (charCode === TokenTypes.NewLine) {
+    if (charCode === TokenTypes.NewLine || charCode === TokenTypes.Feed ||
+        charCode === TokenTypes.Cr &&
+        this.source.charCodeAt(this.$.cursor + 1) !== TokenTypes.NewLine) {
+
       ++this.$.line
       this.$.column = 0
     } else {

@@ -45,16 +45,16 @@ test('stream simple characters', t => {
   }
 })
 
-test('stream should jump to specific line', t => {
-  const stream = new InputStream('   a', 1, 4)
+// test('stream should jump to specific line', t => {
+//   const stream = new InputStream('   a', 1, 4)
 
-  t.deepEqual({
-    code: 97,
-    value: 'a',
-    line: 1,
-    column: 4
-  }, stream.readNextChar())
-})
+//   t.deepEqual({
+//     code: 97,
+//     value: 'a',
+//     line: 1,
+//     column: 4
+//   }, stream.readNextChar())
+// })
 
 test('stream should produce error', t => {
   const stream = new InputStream(' a')
