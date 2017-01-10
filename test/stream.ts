@@ -1,12 +1,12 @@
 import test from 'ava'
-import {InputStream} from '../src/stream'
+import {InputScanner} from '../src/scanner'
 
 test('InputStream should be defined', t => {
-  t.deepEqual(typeof InputStream, 'function')
+  t.deepEqual(typeof InputScanner, 'function')
 })
 
 test('endOfFile should correctly check', t => {
-  const stream = new InputStream('aaa')
+  const stream = new InputScanner('aaa')
   t.falsy(stream.endOfFile())
 
   stream.readNextChar()
@@ -18,7 +18,7 @@ test('endOfFile should correctly check', t => {
 })
 
 test('stream simple characters', t => {
-  const stream = new InputStream('aaB')
+  const stream = new InputScanner('aaB')
 
   // mock stream values
   const streamValues = [{
@@ -57,7 +57,7 @@ test('stream simple characters', t => {
 // })
 
 test('stream should produce error', t => {
-  const stream = new InputStream(' a')
+  const stream = new InputScanner(' a')
   const char = stream.readNextChar()
   t.throws(() => {
     stream.raiseException('message', char)

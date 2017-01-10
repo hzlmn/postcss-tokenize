@@ -8,8 +8,11 @@ import {
 } from './interfaces'
 
 import {TokenTypes} from './tokens'
-import {InputStream} from './stream'
+import {InputScanner} from './scanner'
 import {isSpaceCharacter} from './helpers'
+
+
+const RE_AT_END  = /[ \n\t\r\f\{\(\)'"\\;/\[\]#]/
 
 
 /**
@@ -27,10 +30,10 @@ export class Tokenizer {
   token: any
   buffer: Array<any>
 
-  private $stream: InputStream
+  private $stream: InputScanner
 
   constructor(source: string, options?: IConfiguration) {
-    this.$stream = new InputStream(source)
+    this.$stream = new InputScanner(source)
     this.source = source
     this.options = options
     this.length = this.source.length
@@ -40,8 +43,9 @@ export class Tokenizer {
   /**
    * Read next char value
    */
-  readNextChar() {
+  readNextChar(): Character {
     this.char = this.buffer.length ? this.buffer.shift() : this.$stream.readNextChar()
+    return this.char
   }
 
   /**
@@ -65,13 +69,9 @@ export class Tokenizer {
    */
   readWhileHelper(predicate: Function): string {
     var value = String(this.char.value)
-    this.readNextChar()
-
-    while (predicate(this.char.code)) {
+    while (!this.$stream.endOfFile() && predicate(this.readNextChar())) {
       value += this.char.value
-      this.readNextChar()
     }
-
     this.buffer.push(this.char)
     return value
   }
@@ -123,15 +123,24 @@ export class Tokenizer {
           this.token = [';', ';', this.char.line, this.char.column]
           break
 
-        case TokenTypes.OpenParentheses:
+        case TokenTypes.At:
+          var token = [
+            'at-word',
+            null,
+            this.char.line,
+            this.char.column
+          ]
 
+          var value = this.readWhileHelper((char) => !RE_AT_END.test(char.value))
+          token[1] = value
+          token.push(this.char.line)
+          token.push(this.char.column)
 
+          this.token = token
+          break
 
         default:
-          var nextChar = this.lookupNextChar()
-          if (this.char.code === TokenTypes.Slash && nextChar.code === TokenTypes.Asterisk) {
-            this.startToken()
-          }
+          this.token = []
           break
       }
 

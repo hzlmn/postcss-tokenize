@@ -1,10 +1,16 @@
 import {TokenTypes} from './tokens'
 
-export function isSpaceCharacter(code) {
-  return (
-    code === TokenTypes.Space ||
-    code === TokenTypes.Feed ||
-    code === TokenTypes.NewLine ||
-    code === TokenTypes.Tab
-  )
+/* Check if character is space character */
+export function isSpaceCharacter(char) {
+  switch (char.code) {
+    case TokenTypes.Space:
+    case TokenTypes.Feed:
+    case TokenTypes.NewLine:
+    case TokenTypes.Tab:
+    case TokenTypes.Cr:
+      return true
+  }
+
+  return false
 }
+

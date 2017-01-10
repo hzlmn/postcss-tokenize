@@ -2,9 +2,6 @@ import { UnknownCharError } from './errors'
 import { Character } from './interfaces'
 import { TokenTypes, TokenNames } from './tokens'
 
-/* List fo chars that starts new line */
-const NEWLINE_CHARS = ''
-
 /* Internal positioning state */
 interface PositionState {
   cursor: number,
@@ -13,7 +10,7 @@ interface PositionState {
 }
 
 /* Base class for working with character stream */
-export class InputStream {
+export class InputScanner {
   source: string
   currentChar: Character
   length: number
@@ -26,7 +23,7 @@ export class InputStream {
    * @param  {number} line=1
    * @param  {number} column=0
   */
-  constructor(source, line = 1, column = 0) {
+  constructor(source: string, line = 1, column = 0) {
     this.source = source
     this.length = this.source.length
 
@@ -41,11 +38,23 @@ export class InputStream {
     this.currentChar = null
   }
 
+  expectNext() {}
+
   /**
-   * Get initial cursor position
-   * from line and column
+   * Check if character is break line character
    */
-  getInitialPosition() {}
+  __isBreakLineCharacter(code: number): boolean {
+    switch (code) {
+      case TokenTypes.NewLine:
+      case TokenTypes.Feed:
+        return true
+
+      case TokenTypes.Cr:
+        return this.source.charCodeAt(this.$.cursor + 1) !== TokenTypes.NewLine
+    }
+
+    return false
+  }
 
   /**
    * Read next character value
@@ -53,10 +62,7 @@ export class InputStream {
   readNextChar(): Character {
     const charCode = this.source.charCodeAt(this.$.cursor)
 
-    if (charCode === TokenTypes.NewLine || charCode === TokenTypes.Feed ||
-        charCode === TokenTypes.Cr &&
-        this.source.charCodeAt(this.$.cursor + 1) !== TokenTypes.NewLine) {
-
+    if (this.__isBreakLineCharacter(charCode)) {
       ++this.$.line
       this.$.column = 0
     } else {
@@ -78,21 +84,21 @@ export class InputStream {
   /**
    * Lookup previous character
    */
-  back() {
+  readPreviousChar() {
 
   }
 
   /**
    * Get current Character
    */
-  getCurrentChar() {
+  getCurrentChar(): Character {
     return this.currentChar
   }
 
   /**
    * Check if end of file was reached
    */
-  endOfFile() {
+  endOfFile(): boolean {
     return this.$.cursor >= this.length
   }
 
@@ -104,7 +110,7 @@ export class InputStream {
    *
    * @throws UnknownCharError
    */
-  raiseException(message: string, char: Character) {
+  raiseException(message: string, char: Character): UnknownCharError {
     throw new UnknownCharError(message, char)
   }
 }

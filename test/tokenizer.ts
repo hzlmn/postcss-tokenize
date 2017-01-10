@@ -4,7 +4,7 @@
  */
 
 import test from 'ava'
-import {Tokenizer, tokenize} from '../src'
+import {Tokenizer, tokenize} from '../src/tokenizer'
 
 function run(t, css: string, opts?, tokens?) {
     if ( typeof tokens === 'undefined' ) [tokens, opts] = [opts, tokens];
