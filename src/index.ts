@@ -37,18 +37,27 @@ export class Tokenizer {
     this.buffer = []
   }
 
-  /* Read next character */
+  /**
+   * Read next char value
+   */
   readNextChar() {
     this.char = this.buffer.length ? this.buffer.shift() : this.$stream.readNextChar()
   }
 
-  /* Lookup next token value */
+  /**
+   * Lookup next character value
+   */
   lookupNextChar() {
     const nextChar = this.$stream.readNextChar()
     this.buffer.push(nextChar)
-
     return nextChar
   }
+
+
+  /**
+   * Lookup previous character value
+   */
+  getPreviousCharacter() {}
 
   /**
    * Read while predicate true,
@@ -66,6 +75,12 @@ export class Tokenizer {
     this.buffer.push(this.char)
     return value
   }
+
+  /* Start initial token */
+  startToken() {}
+
+  /* Finish token structure */
+  endToken() {}
 
   /**
    * Read next token value
@@ -93,23 +108,30 @@ export class Tokenizer {
           break
 
         case TokenTypes.OpenCurly:
-            this.token = ['{', '{', this.char.line, this.char.column]
-            break
+          this.token = ['{', '{', this.char.line, this.char.column]
+          break
 
         case TokenTypes.CloseCurly:
-            this.token = ['}', '}', this.char.line, this.char.column]
-            break
+          this.token = ['}', '}', this.char.line, this.char.column]
+          break
 
         case TokenTypes.Colon:
-            this.token = [':', ':', this.char.line, this.char.column]
-            break
+          this.token = [':', ':', this.char.line, this.char.column]
+          break
 
         case TokenTypes.Semicolon:
-            this.token = [';', ';', this.char.line, this.char.column]
-            break
+          this.token = [';', ';', this.char.line, this.char.column]
+          break
+
+        case TokenTypes.OpenParentheses:
+
+
 
         default:
-          this.token = []
+          var nextChar = this.lookupNextChar()
+          if (this.char.code === TokenTypes.Slash && nextChar.code === TokenTypes.Asterisk) {
+            this.startToken()
+          }
           break
       }
 

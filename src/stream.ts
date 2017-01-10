@@ -76,6 +76,13 @@ export class InputStream {
   }
 
   /**
+   * Lookup previous character
+   */
+  back() {
+
+  }
+
+  /**
    * Get current Character
    */
   getCurrentChar() {
