@@ -31,9 +31,17 @@ export class InputScanner {
     this.currentChar = null
   }
 
-  /**
-   * Check if character is break line character
-   */
+  /* Get previous character code */
+  getPreviousCode() {
+    return this.source.charCodeAt(this.cursor - 1)
+  }
+
+  /* Get previous character value */
+  getPreviousValue() {
+    return this.source.charAt(this.cursor - 1)
+  }
+
+  /* Check if character is break line character */
   private isBreakLineCharacter(code: number): boolean {
     switch (code) {
       case TokenTypes.NewLine:
@@ -47,9 +55,7 @@ export class InputScanner {
     return false
   }
 
-  /**
-   * Read next character value
-   */
+  /* Read next character value */
   readNextChar(): Character {
     const charCode = this.source.charCodeAt(this.cursor)
 
@@ -72,24 +78,7 @@ export class InputScanner {
     return this.currentChar
   }
 
-  /**
-   * Get previous character
-   */
-  getPreviousChar(): Character {
-    const charCode = this.source.charCodeAt(this.cursor - 1)
-    var line, column
-
-    // if (this.__isBreakLineCharacter(charCode)) {
-    //   line = this.line - 1
-    //   this.
-    // }
-
-    return
-  }
-
-  /**
-   * Get current Character
-   */
+  /* Get current Character */
   getCurrentChar(): Character {
     return this.currentChar
   }

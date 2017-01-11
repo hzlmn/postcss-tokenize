@@ -10,10 +10,12 @@ import {
 import {TokenTypes} from './tokens'
 import {InputScanner} from './scanner'
 import {isSpaceCharacter} from './helpers'
+import {Token} from './token'
 
-
-const RE_AT_END  = /[ \n\t\r\f\{\(\)'"\\;/\[\]#]/
-
+/* Matching regexes, should be revisited */
+const RE_AT_END      = /[ \n\t\r\f\{\(\)'"\\;/\[\]#]/
+const RE_WORD_END    = /[ \n\t\r\f\(\)\{\}:;@!'"\\\]\[#]|\/(?=\*)/
+const RE_BAD_BRACKET = /.[\\\/\("'\n]/
 
 /**
  * @class Tokenizer
@@ -51,17 +53,11 @@ export class Tokenizer {
   /**
    * Lookup next character value
    */
-  lookupNextChar() {
+  lookupNextChar(): Character {
     const nextChar = this.$stream.readNextChar()
     this.buffer.push(nextChar)
     return nextChar
   }
-
-
-  /**
-   * Lookup previous character value
-   */
-  getPreviousCharacter() {}
 
   /**
    * Read while predicate true,
@@ -71,18 +67,12 @@ export class Tokenizer {
     var value = String(this.char.value)
     while (!this.$stream.endOfFile() && predicate(this.readNextChar())) {
       value += this.char.value
-      console.log('in-while',this.char.value)
+      //console.log('in-while',this.char.value)
     }
-    console.log(this.char.value)
+    //console.log(this.char.value)
     this.buffer.push(this.char)
     return value
   }
-
-  /* Start initial token */
-  startToken() {}
-
-  /* Finish token structure */
-  endToken() {}
 
   /**
    * Read next token value
@@ -98,55 +88,64 @@ export class Tokenizer {
         case TokenTypes.Tab:
         case TokenTypes.Cr:
           var value = this.readWhileHelper(isSpaceCharacter)
-          this.token = ['space', value]
+          this.token = new Token('space', value)
           break
 
         case TokenTypes.OpenSquare:
-          this.token = ['[', '[', this.char.line, this.char.column]
+          this.token = new Token('[', '[', this.char.line, this.char.column)
           break
 
         case TokenTypes.CloseSquare:
-          this.token = [']', ']', this.char.line, this.char.column]
+          this.token = new Token(']', ']', this.char.line, this.char.column)
           break
 
         case TokenTypes.OpenCurly:
-          this.token = ['{', '{', this.char.line, this.char.column]
+          this.token = new Token('{', '{', this.char.line, this.char.column)
           break
 
         case TokenTypes.CloseCurly:
-          this.token = ['}', '}', this.char.line, this.char.column]
+          this.token = new Token('}', '}', this.char.line, this.char.column)
           break
 
         case TokenTypes.Colon:
-          this.token = [':', ':', this.char.line, this.char.column]
+          this.token = new Token(':', ':', this.char.line, this.char.column)
           break
 
         case TokenTypes.Semicolon:
-          this.token = [';', ';', this.char.line, this.char.column]
+          this.token = new Token(';', ';', this.char.line, this.char.column)
           break
 
         case TokenTypes.At:
-          var token = [
-            'at-word',
-            null,
-            this.char.line,
-            this.char.column
-          ]
-
+          var token = new Token('at-word', null, this.char.line, this.char.column)
           var value = this.readWhileHelper((char) => !RE_AT_END.test(char.value))
-          token[1] = value
-          token.push(this.char.line)
-          token.push(this.char.column)
+          token.value = value
+          token.lineEnd = this.char.line
+          token.columnEnd = this.char.column
 
           this.token = token
           break
+
+        case TokenTypes.OpenParentheses:
+          var prev = this.$stream.getPreviousValue() || ''
+          var next = this.lookupNextChar().code
+
+          if ( prev === 'url' &&
+              next !== TokenTypes.SingleQuote &&
+              next !== TokenTypes.DodubleQuote &&
+              next !== TokenTypes.Space &&
+              next !== TokenTypes.NewLine &&
+              next !== TokenTypes.Tab &&
+              next !== TokenTypes.Feed && next !== TokenTypes.Cr
+            ) {
+
+            }
 
         default:
           this.token = []
           break
       }
 
-      return this.token
+      return this.token.getToken()
     }
   }
 

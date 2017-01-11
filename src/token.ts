@@ -34,21 +34,16 @@ export class Token {
     this.columnEnd = columnEnd
   }
 
-  /* Get readable token value */
+  /**
+   * Get token value compatible with PostCSS token
+   */
   getToken() {
     if (this.lineStart && this.columnStart) {
       if (this.lineEnd && this.columnEnd) {
-        return [
-          this.type,
-          this.value,
-          this.lineStart,
-          this.columnStart,
-          this.lineEnd,
-          this.columnEnd
-        ]
+        return [this.type, this.value, this.lineStart, this.columnStart, this.lineEnd, this.columnEnd]
       }
 
-      return [this.type, this.value, this.lineStart, this.columnEnd]
+      return [this.type, this.value, this.lineStart, this.columnStart]
     }
 
     return [this.type, this.value]
