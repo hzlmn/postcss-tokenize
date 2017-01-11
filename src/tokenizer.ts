@@ -71,7 +71,9 @@ export class Tokenizer {
     var value = String(this.char.value)
     while (!this.$stream.endOfFile() && predicate(this.readNextChar())) {
       value += this.char.value
+      console.log('in-while',this.char.value)
     }
+    console.log(this.char.value)
     this.buffer.push(this.char)
     return value
   }

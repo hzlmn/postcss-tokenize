@@ -2,19 +2,14 @@ import { UnknownCharError } from './errors'
 import { Character } from './interfaces'
 import { TokenTypes, TokenNames } from './tokens'
 
-/* Internal positioning state */
-interface PositionState {
-  cursor: number,
-  line: number,
-  column: number
-}
-
 /* Base class for working with character stream */
 export class InputScanner {
   source: string
   currentChar: Character
+  cursor: number
+  line: number
+  column: number
   length: number
-  $: PositionState
 
   /**
    * @class InputStream
@@ -28,29 +23,25 @@ export class InputScanner {
     this.length = this.source.length
 
     /* Internal position variable */
-    this.$ = {
-      cursor: 0,
-      line: line,
-      column
-    }
+    this.cursor = 0
+    this.line = line
+    this.column = column
 
     /* currentCharacter */
     this.currentChar = null
   }
 
-  expectNext() {}
-
   /**
    * Check if character is break line character
    */
-  __isBreakLineCharacter(code: number): boolean {
+  private isBreakLineCharacter(code: number): boolean {
     switch (code) {
       case TokenTypes.NewLine:
       case TokenTypes.Feed:
         return true
 
       case TokenTypes.Cr:
-        return this.source.charCodeAt(this.$.cursor + 1) !== TokenTypes.NewLine
+        return this.source.charCodeAt(this.cursor + 1) !== TokenTypes.NewLine
     }
 
     return false
@@ -60,32 +51,40 @@ export class InputScanner {
    * Read next character value
    */
   readNextChar(): Character {
-    const charCode = this.source.charCodeAt(this.$.cursor)
+    const charCode = this.source.charCodeAt(this.cursor)
 
-    if (this.__isBreakLineCharacter(charCode)) {
-      ++this.$.line
-      this.$.column = 0
+    if (this.isBreakLineCharacter(charCode)) {
+      ++this.line
+      this.column = 0
     } else {
-      ++this.$.column
+      ++this.column
     }
 
-    this.$.cursor++
+    this.cursor++
 
     this.currentChar = {
       code: charCode,
       value: String.fromCharCode(charCode),
-      line: this.$.line,
-      column: this.$.column
+      line: this.line,
+      column: this.column
     }
 
     return this.currentChar
   }
 
   /**
-   * Lookup previous character
+   * Get previous character
    */
-  readPreviousChar() {
+  getPreviousChar(): Character {
+    const charCode = this.source.charCodeAt(this.cursor - 1)
+    var line, column
 
+    // if (this.__isBreakLineCharacter(charCode)) {
+    //   line = this.line - 1
+    //   this.
+    // }
+
+    return
   }
 
   /**
@@ -99,7 +98,7 @@ export class InputScanner {
    * Check if end of file was reached
    */
   endOfFile(): boolean {
-    return this.$.cursor >= this.length
+    return this.cursor >= this.length
   }
 
   /**
